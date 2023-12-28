@@ -1,0 +1,5 @@
+1. Criar virtual enviroments (em vez do global enviroment) para evitar conflitos
+2. Activar virtual enviroment (venv) antes de começar a desenvolver
+3. Instalar packages (bibliotecas) que precises e dar import (para criar um ambiente virtual que utilize as bibliotecas já instaladas no golbal, utilizar o comando "virtualenv env --system-site-packages" e depois ativar ambiente, caso queiras atualizar as de um ambiente virtual já criado, itr ao ficheiro pyenv.cfg e meter o parâmetro "include-system-site-packages = true", salvar e activar o ambiente)
+
+Bonus. Para sair da Shell do Python (Python IDLE) fazer crtl + z e depois dar enter.
