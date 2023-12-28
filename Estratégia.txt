@@ -1,0 +1,24 @@
+Trabralho Prático 9 
+
+Objetivo: Seguimento de uma forma e/ou cor em particular, com eventual mudança de cor em tempo real.
+Proposto pelo Professor: fazer o programa para contar bolas de uma cor numa mesa de fundo constante
+
+Necessidades:
+    1. Obter forma e/ou cor
+
+    2. Seguimento da forma e/ou cor
+
+    3. Mudar cor da forma e/ou cor (Opcional)
+
+Soluções:
+    1.1. Algoritmo para separar fundo da forma
+    1.2. Algoritmo para separar fundo da cor
+
+    2.1. Loop para controlar deslocamento da forma
+    2.2. Loop para controlar deslocamento da cor
+
+    3.1. Conversão da cor do objeto em análise
+
+    Ver transformada de hought para procurar linhas ou objetos redondos
+
+    
