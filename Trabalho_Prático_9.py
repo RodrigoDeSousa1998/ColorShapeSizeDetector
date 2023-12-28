@@ -9,9 +9,11 @@
 
 ###################################### TO DO LIST ############################################
 
-#! TODO Meter contador de bolas de um  lado e de outro na interface
+#! TODO Meter contador de bolas de um  lado da imagem analisada real com circulos à volta
 #! TODO Fazer deteções de linhas verdes e só contar circulos dentro das linhas verdes (ver se 
 #       há linha de meio campo, para contar ou só as bolas de uma lado, ou do outro)
+#! TODO Meter hierarchy para identificar apenas os contornos dos maior quadrado verde que encontrar
+#! TODO Fazer meno com teclas de comando para alternar a contagem de bolas de um lado e outro do campo 
 #! TODO Fazer videos com bolas a mexer-se dentro de campo no onenote (ou outra aplicação)
 #! TODO Eliminar ruidos depois da calibração de cor, através de métricas de áreas da imagem
 #! TODO Fazer menu com teclas de comando para UX (para recablibrar, mudar raio de bolas etc)
@@ -34,26 +36,28 @@ AccumThsld = 10
 # Getting video feed from camera
 #videoFeed = cv2.VideoCapture(1)
 
-imageSelected = cv2.imread("ImagemTeste1.png")
+image = cv2.imread("ImagemTeste1.png")
 
 # To create trackbar windows
-fullTable = cv2.imread("UI_Image.png")
+table = cv2.imread("UI_Image.png")
 
 def Map(x): 
-    temp=fullTable.copy()
+    temp=table.copy()
     cv2.rectangle(temp, (int(BallLT *6.42), 0), (int(BallUT *6.42), 140), (127, 127, 127), 2)
     cv2.rectangle(temp, (int(FieldLT*6.42), 0), (int(FieldUT*6.42), 140), (127, 127, 127), 2)
     cv2.circle(temp, (380, 254), int(MinRadius*0.75), (255,0,0), 2)
     cv2.circle(temp, (760, 254), int(MaxRadius*0.75), (255,0,0), 2)
-    cv2.imshow('Calibrations', temp)
+    cv2.imshow(window_name, temp)
 
-cv2.createTrackbar('Field LT  ','Calibrations',10,179, Map)
-cv2.createTrackbar('Field UT  ','Calibrations',10,179, Map)
-cv2.createTrackbar('Ball LT   ','Calibrations',10,179, Map)
-cv2.createTrackbar('Ball UT   ','Calibrations',10,179, Map)
-cv2.createTrackbar('Min Radius','Calibrations',10,200, Map)
-cv2.createTrackbar('Max Radius','Calibrations',10,200, Map)
-cv2.createTrackbar('Acc.      ','Calibrations',10,200, Map)
+window_name = 'Calibrations'
+cv2.namedWindow(window_name)
+cv2.createTrackbar('Field LT',window_name,10,179, Map)
+cv2.createTrackbar('Field UT',window_name,10,179, Map)
+cv2.createTrackbar('Ball LT',window_name,10,179, Map)
+cv2.createTrackbar('Ball UT',window_name,10,179, Map)
+cv2.createTrackbar('Min Radius',window_name,10,200, Map)
+cv2.createTrackbar('Max Radius',window_name,10,200, Map)
+cv2.createTrackbar('Acc.',window_name,10,200, Map)
 
 #Displaying the feed
 # ret, frame = videoFeed.read()
@@ -61,12 +65,12 @@ cv2.createTrackbar('Acc.      ','Calibrations',10,200, Map)
 while (cv2.waitKey(1)!=27):
     
     # Conversion to HSV
-    hsv = cv2.cvtColor(imageSelected, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Field Area Detection
     # Filter lower and upper bound
-    FieldLT = cv2.getTrackbarPos('Field LT', 'Calibrations')
-    FieldUT = cv2.getTrackbarPos('Field UT', 'Calibrations')
+    FieldLT = cv2.getTrackbarPos('Field LT', window_name)
+    FieldUT = cv2.getTrackbarPos('Field UT', window_name)
     FieldMinColor = np.array([FieldLT, 20, 20])
     FieldMaxColor = np.array([FieldUT, 255, 255])
     FAD_filtered = cv2.inRange(hsv, FieldMinColor, FieldMaxColor)
@@ -97,18 +101,20 @@ while (cv2.waitKey(1)!=27):
             x, y, w, h = cv2.boundingRect(contour)
 
             # Extract the region inside the square
-            region_of_interest = imageSelected[y:y+h, x:x+w]
+            region_of_interest = image[y:y+h, x:x+w]
             cv2.imshow('result2', region_of_interest)
 
-            BallLT = cv2.getTrackbarPos('Ball LT', 'Calibrations')
-            BallUT = cv2.getTrackbarPos('Ball UT', 'Calibrations')
+            # Ball Detection
+            # Filter lower and upper bound
+            BallLT = cv2.getTrackbarPos('Ball LT', window_name)
+            BallUT = cv2.getTrackbarPos('Ball UT', window_name)
             BallMinColor = np.array([BallLT, 20, 20])
             BallMaxColor = np.array([BallUT, 255, 255])
             BD_filtered = cv2.inRange(region_of_interest, BallMinColor, BallMaxColor)
 
-            MinRadius = cv2.getTrackbarPos('Min Radius', 'Calibrations')
-            MaxRadius = cv2.getTrackbarPos('Max Radius', 'Calibrations')
-            AccumThsld = cv2.getTrackbarPos('Acc.', 'Calibrations')
+            MinRadius = cv2.getTrackbarPos('Min Radius', window_name)
+            MaxRadius = cv2.getTrackbarPos('Max Radius', window_name)
+            AccumThsld = cv2.getTrackbarPos('Acc.', window_name)
             MinDistCircles = 100
             circles = cv2.HoughCircles(BD_filtered,cv2.HOUGH_GRADIENT,1,MinDistCircles, 
                                             param1=10,param2=AccumThsld,minRadius=MinRadius,maxRadius=MaxRadius)
